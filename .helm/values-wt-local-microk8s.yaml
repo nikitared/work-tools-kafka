@@ -1,0 +1,8 @@
+userPassword:
+  mongo:
+    user: d3R1c2VyCg==
+    pass: d3RwYXNzd2QK
+mongo:
+  host: mongodb.worktools.svc.cluster.local
+  port: 27017
+  database: worktools

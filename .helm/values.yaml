@@ -1,0 +1,67 @@
+# Default values for wt-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+#region not use conf
+pvc:
+  log: prod-scs-pvc-logs
+  storageClass: ""
+  storageClassName: ""
+service:
+  type: ClusterIP
+  port: 80
+ingress:
+  enabled: false
+  annotations: { }
+  path: /
+  hosts:
+    - chart-example.local
+  tls: [ ]
+  class: wt-ingress
+  name: wt-ingress
+resources: { }
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
+#endregion
+#region resource limits
+resourceLimits:
+  small:
+    memory: "384Mi"
+    cpu: "200m"
+  medium:
+    memory: "512Mi"
+    cpu: "400m"
+  large:
+    memory: "1024Mi"
+    cpu: "600m"
+resourceRequests:
+  small:
+    memory: "384Mi"
+    cpu: "200m"
+  medium:
+    memory: "512Mi"
+    cpu: "400m"
+  large:
+    memory: "1024Mi"
+    cpu: "600m"
+#endregion
+#region replica сount
+replicaCount:
+  deafault: 1
+  orderRaw: 1
+#endregion
+#region image
+image:
+  tag: latest
+  pullPolicy: IfNotPresent
+  repository:
+    registry: nikitared/worktools
+    path: nikitared/worktools
+
+contour: local
+prod: false
+
+mongo:
+  host: mongo-mongodb
+  port: 27017

@@ -1,0 +1,28 @@
+plugins {
+    id "com.palantir.docker"
+    id 'com.palantir.docker-run'
+}
+
+docker {
+    // Jar jar = project.jar
+
+    // def baseName = jar.getArchiveBaseName().get()
+    // def version = jar.getArchiveVersion().get()
+    // def extension = jar.getArchiveExtension().get()
+    // String archiveName = "${baseName}-${version}.${extension}"
+
+    // println archiveName
+
+    // name = "nikitared/wt-kafka:${version}"
+    // dockerfile file('docker/Dockerfile')
+    // buildArgs([APP: archiveName])
+    // files jar.getDestinationDirectory().get().asFile
+    // dependsOn tasks.bootJar
+
+}
+
+dockerRun {
+    name "nikitared/wt-kafka:${version}"
+    image "nikitared/wt-kafka:${version}"
+    command 'java', '-jar', 'app.jar'
+}

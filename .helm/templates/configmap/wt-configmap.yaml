@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wt-configmap
+data:
+  wt_mongodb_host: mongo-mongodb.{{ .Values.kubernetes.serviceNamespace }}
+  wt_mongodb_port: "27017"
+  wt_mongodb_database: "worktools"
+  wt_mongodb_username: "wtuser"
+  wt_mongodb_password: "wtpasswd"

@@ -1,0 +1,4 @@
+include ":tools-kafka-core"
+include ":tools-kafka-ms"
+include ":tools-kafka-api"
+include ":tools-kafka-test-common"

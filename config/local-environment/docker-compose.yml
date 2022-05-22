@@ -1,0 +1,74 @@
+---
+version: '3.8'
+services:
+  wt-zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.4
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      wt_db_net:
+        ipv4_address: 10.10.0.55
+  wt-kafka:
+    image: confluentinc/cp-kafka:6.2.4
+    ports:
+      - "9092:9092"
+    links:
+      - wt-zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: BROKER://0.0.0.0:9092,PLAINTEXT://0.0.0.0:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
+      KAFKA_NUM_PARTITIONS: 6
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093,BROKER://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      wt_db_net:
+        ipv4_address: 10.10.0.56
+  wt-schema-registry:
+    image: confluentinc/cp-schema-registry:6.2.4
+    ports:
+      - "8081:8081"
+    links:
+      - wt-zookeeper
+      - wt-kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+      SCHEMA_REGISTRY_DEBUG: "true"
+    networks:
+      wt_db_net:
+        ipv4_address: 10.10.0.57
+  #
+  wt-mongo:
+    image: bitnami/mongodb:5.0
+    ports:
+      - "27017:27017"
+    environment:
+      AUTH: "yes"
+      MONGODB_ADMIN_USER: "admin"
+      MONGODB_ADMIN_PASS: "q"
+      MONGODB_APPLICATION_USER: "wtuser"
+      MONGODB_APPLICATION_PASS: "wtpwd"
+      MONGODB_APPLICATION_DATABASE: worktools_kafka
+    volumes:
+      - ~/work-tools-db/mongo:/data/db
+    networks:
+      wt_db_net:
+        ipv4_address: 10.10.0.65
+  #
+
+networks:
+  wt_db_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/24

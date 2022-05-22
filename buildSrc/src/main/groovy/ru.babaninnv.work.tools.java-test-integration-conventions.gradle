@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'idea'
+}
+
+ext {
+    srcTestIntegration = "src/testIntegration"
+    srcTestIntegrationJava = file(srcTestIntegration + "/java")
+    srcTestIntegrationResources = file(srcTestIntegration + "/resources")
+}
+
+configurations {
+    testIntegrationTestImplementation.extendsFrom testImplementation
+    testIntegrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    testIntegrationImplementation.extendsFrom implementation
+    testIntegrationRuntimeOnly.extendsFrom runtimeOnly
+}
+
+sourceSets {
+    testIntegration {
+        test {
+            java {
+                compileClasspath += main.output + test.output
+                runtimeClasspath += main.output + test.output
+                srcDir srcTestIntegrationJava
+            }
+            resources.srcDir srcTestIntegrationResources
+            compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+            runtimeClasspath += output + compileClasspath
+        }
+    }
+}
+
+tasks.register('testIntegration', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.testIntegration.output.classesDirs
+    classpath = sourceSets.testIntegration.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn testIntegration
+
+idea {
+    module {
+        testSourceDirs += srcTestIntegrationJava
+        testSourceDirs += srcTestIntegrationResources
+    }
+}
+idea.module.testSourceDirs.containsAll(project.sourceSets.testIntegration.allJava.srcDirs)

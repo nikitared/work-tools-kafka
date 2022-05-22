@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tools-kafka
+  name: tools-kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tools-kafka
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: tools-kafka
+    spec:
+      containers:
+      - image: nikitared/wt-kafka:1.1.2-SNAPSHOT
+        name: wt-kafka
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        env:
+          - name: wt_mongodb_host
+            valueFrom:
+              configMapKeyRef:
+                key: wt_mongodb_host
+                name: wt-configmap
+          - name: wt_mongodb_port
+            valueFrom:
+              configMapKeyRef:
+                key: wt_mongodb_port
+                name: wt-configmap
+          - name: wt_mongodb_database
+            valueFrom:
+              configMapKeyRef:
+                key: wt_mongodb_database
+                name: wt-configmap
+          - name: wt_mongodb_username
+            valueFrom:
+              configMapKeyRef:
+                key: wt_mongodb_username
+                name: wt-configmap
+          - name: wt_mongodb_password
+            valueFrom:
+              configMapKeyRef:
+                key: wt_mongodb_password
+                name: wt-configmap
+      imagePullSecrets:
+        - name: worktools-regsecret
